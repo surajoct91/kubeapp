@@ -4,7 +4,7 @@ This also has been packaged as Helm charts for individual application and can be
 
 There are 2 ways to run this using kubectl and minikube. First is individually getting into each microservice layer folder and starting them one by one and another one is running from a single file from the application directory.
 
-===========
+--------------------
 
 Pre-requisites:
 
@@ -21,8 +21,9 @@ Note: this is valid for the running terminal and will need to be done if you ope
  ~/DockerFiles/mysql# docker build -t appmysql .
 
  ~/DockerFiles/application# docker build -t pythonapp .
+ 
+---------------
 
-===============
 Option - 1: Running as individual step by step service:
 
 1) ~# minikube start --vm-driver=virtualbox
@@ -85,7 +86,7 @@ http://192.168.99.105:30331
 
 You should get the values for last name for these 2 above values and for anything else it should say not found in the database.
 
-===================
+------------------------
 
 Option - 2: This whole thing can be done via a single yml file from the application directory under root: 
 
