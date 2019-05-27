@@ -18,9 +18,9 @@ Note: this is valid for the running terminal and will need to be done if you ope
 
 3) Create pythonapp and mysql database docker container images from the DockerFiles directory like:
 
-# ~/DockerFiles/mysql# docker build -t appmysql .
+ ~/DockerFiles/mysql# docker build -t appmysql .
 
-# ~/DockerFiles/application# docker build -t pythonapp .
+ ~/DockerFiles/application# docker build -t pythonapp .
 
 ===============
 Option - 1: Running as individual step by step service:
@@ -35,7 +35,7 @@ Option - 1: Running as individual step by step service:
 
 3) Build mysql Docker image using the name "appmysql"
 
-# ~/DockerFiles/mysql# docker build -t appmysql .
+ ~/DockerFiles/mysql# docker build -t appmysql .
 
 4) Similarly build the pythonapp image  "pythonapp"
 
@@ -75,8 +75,8 @@ mysql-app    ClusterIP   None          <none>        3306/TCP         59s
 python-app   NodePort    10.104.98.1   <none>        5000:30331/TCP   16s
 
 ~/webapp# minikube service python-app --url
-http://192.168.99.105:30331
 
+http://192.168.99.105:30331
 
 
 12) The Database only has 2 values in the First Name column for the purpose of demonstration: 
@@ -103,7 +103,9 @@ NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
 kubernetes   ClusterIP   10.96.0.1        <none>        443/TCP          28m
 mysql-app    ClusterIP   None             <none>        3306/TCP         12s
 python-app   NodePort    10.108.136.171   <none>        5000:32730/TCP   12s
+
 root@laptop46:~/application# minikube service python-app --url
+
 http://192.168.99.105:32730
 
 
