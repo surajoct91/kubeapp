@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    app: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: myapp
+        tier: frontend
+    spec:
+      containers:
+      - image: pythonapp:latest
+        name: webapp
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_HOSTNAME
+          value: mysql-app
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: user
+        - name: MYSQL_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: MYSQL_DBNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: db
+        ports:
+        - containerPort: 5000
+          name: webapp

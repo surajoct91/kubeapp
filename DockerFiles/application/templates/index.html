@@ -1,0 +1,19 @@
+<HTML>
+<BODY bgcolor="white">
+<form method="POST" action="">
+    <center>
+    <H1>This page will give you the Last Name if the First Name is found in Database </H1> <br>
+    First Name to search <input type = "text" name= "fname" /> <br>
+    <input type = "submit">
+    </center>
+</form>
+
+{% if data %}
+      The Last Name from the Database is <b> {{data}} </b>
+{% else %}
+      The First Name value <b> does not exist in Database </b>
+{% endif %}
+
+
+</BODY>
+</HTML>

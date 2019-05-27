@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Secret
+metadata:
+ name: mysql-pass
+type: Opaque
+data:
+ rootpw: YWRtaW4=
+ user: YXBwdXNlcg==
+ password: YXBwcGFzcw==
+ db: YXBwdGFibGU=
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: myapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydatabase
+  labels:
+    app: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+      tier: mysql
+  template:
+    metadata:
+      labels:
+        app: myapp
+        tier: mysql
+    spec:
+      containers:
+      - image: appmysql
+        name: mysql
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: rootpw
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: db
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-app   
+  labels:                 
+    app: myapp
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: myapp
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    app: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: myapp
+        tier: frontend
+    spec:
+      containers:
+      - image: pythonapp
+        name: webapp
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_HOSTNAME
+          value: mysql-app
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: user
+        - name: MYSQL_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: MYSQL_DBNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: db
+        ports:
+        - containerPort: 5000
+          name: webapp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-app
+  labels:
+    app: myapp
+spec:
+  ports:
+    - port: 5000
+  selector:
+    app: myapp
+    tier: frontend
+  type: NodePort
